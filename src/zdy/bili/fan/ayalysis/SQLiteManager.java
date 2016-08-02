@@ -2,13 +2,24 @@ package zdy.bili.fan.ayalysis;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SQLiteManager {
 
+	private static final SQLiteManager INSTANCE = new SQLiteManager();
+
 	Connection c = null;
 	Statement stmt = null;
+
+	private SQLiteManager() {
+
+	}
+
+	public static SQLiteManager getInstance() {
+		return INSTANCE;
+	}
 
 	public void initdb() {
 		try {
@@ -27,9 +38,6 @@ public class SQLiteManager {
 			}
 			System.out.println("Table created successfully");
 
-			// 连接SQLite的JDBC
-			// 建立一个数据库名zieckey.db的连接，如果不存在就在当前目录下创建之
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -37,6 +45,11 @@ public class SQLiteManager {
 
 	public void insert(int mid, String nickname, int fans, int attention, String registerTime) {
 		try {
+			ResultSet rs = stmt.executeQuery("SELECT * FROM BILI_INFO WHERE MID=" + mid + ";");
+			if (rs.next()) {
+				return;
+			}
+
 			String sql = "INSERT INTO BILI_INFO (MID,NICKNAME,FANS,ATTENTION,REGISTER) " + "VALUES (" + mid + ", '"
 					+ nickname + "', " + fans + ", " + attention + ", '" + registerTime + "' );";
 			stmt.executeUpdate(sql);

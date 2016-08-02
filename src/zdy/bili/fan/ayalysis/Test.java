@@ -10,15 +10,12 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class Test {
-	static SQLiteManager manager;
 
 	public static void main(String[] args) {
-		//manager = new SQLiteManager();
-		//manager.initdb();
-		long num=20000000;
+		SQLiteManager.getInstance().initdb();
+		long num=20;
 		for (int i = 0; i < num; i++) {
-			// getInfo("2378679");
-			
+			getInfo("2378679");
 		}
 	}
 
@@ -29,14 +26,14 @@ public class Test {
 			public void onResponse(Call arg0, Response arg1) throws IOException {
 				// TODO Auto-generated method stub
 
-				System.out.println("code= " + arg1.code() + arg1.message());
+				System.out.println("code= " + arg1.code() +"  status= "+ arg1.message());
 				String raw = arg1.body().string();
 				JsonObject object = new JsonParser().parse(raw).getAsJsonObject().get("data").getAsJsonObject();
 				int fans = object.get("fans").getAsInt();
 				int attention = object.get("attention").getAsInt();
 				String nickname = object.get("name").getAsString();
 				String regtime = object.get("regtime").getAsString();
-				manager.insert(Integer.valueOf(mid), nickname, fans, attention, regtime);
+				SQLiteManager.getInstance().insert(Integer.valueOf(mid), nickname, fans, attention, regtime);
 			}
 
 			@Override
