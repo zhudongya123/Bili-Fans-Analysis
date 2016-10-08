@@ -1,5 +1,7 @@
 package zdy.bili.fan.ayalysis.manager;
 
+import zdy.bili.fan.ayalysis.bean.UserInfo;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -9,6 +11,7 @@ import java.sql.Statement;
 public class SQLiteManager {
 
     private static final SQLiteManager INSTANCE = new SQLiteManager();
+    private static int i = 0;
 
     Connection c = null;
 
@@ -29,24 +32,63 @@ public class SQLiteManager {
         return INSTANCE;
     }
 
+    public void insertUser(UserInfo userInfo) {
+        String sql;
+        try {
+            Statement stmt = c.createStatement();
+            sql = "SELECT * FROM BILI_USER_INFO_TABLE WHERE MID=" + userInfo.mid + ";";
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                return;
+            } else {
+                sql = "INSERT INTO BILI_USER_INFO_TABLE " +
+                        "(MID,NAME,APPROVE,SEX,RANK," +
+                        "FACE,COINS,DISPLAYRANK,REGTIME,SPACESTA," +
+                        "BIRTHDAY,PLACE,DESCRIPTION,ATTENTIONS,FANS," +
+                        "FRIEND,ATTENTION,SIGN,CURRENT_EXP,LEVEL," +
+                        "OFFICIAL_STATUS,OFFICIAL_DESC,PLAYNUM) "
+                        + "VALUES ('"
+                        + userInfo.mid + "', '" + userInfo.name + "', '" + String.valueOf(userInfo.approve) + "', '"
+                        + userInfo.sex + "', '" + userInfo.rank + "', '" + userInfo.face + "', '"
+                        + String.valueOf(userInfo.coins) + "', '" + userInfo.DisplayRank + "', '" + userInfo.regtime + "',"
+                        + userInfo.spacesta + ",'" + userInfo.birthday + "', '" + userInfo.place + "', '" + userInfo.description + "', '"
+                        + userInfo.attentions.toString() + "', " + userInfo.fans + ", " + userInfo.friend + ", " + userInfo.attention + ", '"
+                        + userInfo.sign + "', " + userInfo.current_exp + ", " + userInfo.level + ", " + userInfo.official_status + ", '"
+                        + userInfo.official_desc + "', " + userInfo.playNum
+                        + " );";
+                stmt.executeUpdate(sql);
+                i++;
+                System.out.println("ADD BILI_INFO item" + "第 " + i + " 条数据，mid = " + userInfo.mid);
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public void initdb() {
         try {
             Statement stmt = c.createStatement();
             String sql;
             //创建用户信息数据库
-            sql = "CREATE TABLE BILI_INFO " + "(MID INT PRIMARY KEY, " + "NICKNAME TEXT, " + "FANS INT, "
-                    + "ATTENTION INT, " + "REGISTER TEXT, " + "TOTAL_NUM INT" + ")";
+            sql = "CREATE TABLE BILI_USER_INFO_TABLE "
+                    + "(MID TEXT PRIMARY KEY, " + "NAME TEXT, " + "APPROVE TEXT, " + "SEX TEXT, " + "RANK TEXT, "
+                    + "FACE TEXT, " + "COINS TEXT, " + "DISPLAYRANK TEXT, " + "REGTIME TEXT, " + "SPACESTA INT, "
+                    + "BIRTHDAY TEXT, " + "PLACE TEXT, " + "DESCRIPTION TEXT, " + "ATTENTIONS TEXT, " + "FANS INT, "
+                    + "FRIEND INT, " + "ATTENTION INT, " + "SIGN TEXT, " + "CURRENT_EXP INT, " + "LEVEL INT, "
+                    + "OFFICIAL_STATUS INT, " + "OFFICIAL_DESC TEXT, " + "PLAYNUM INT" + ")";
             stmt.executeUpdate(sql);
 
             //创建视频信息数据库
-            sql = "CREATE TABLE BILI_VIDEO " + "(AID INT PRIMARY KEY, " + "MID INT, " + "PLAY_COUNT INT, "
-                    + "TITLE TEXT, " + "COMMENT INT, " + "FAVORITES INT, " + "CREATED TEXT" + ")";
-            stmt.executeUpdate(sql);
+//            sql = "CREATE TABLE BILI_VIDEO " + "(AID INT PRIMARY KEY, " + "MID INT, " + "PLAY_COUNT INT, "
+//                    + "TITLE TEXT, " + "COMMENT INT, " + "FAVORITES INT, " + "CREATED TEXT" + ")";
+//            stmt.executeUpdate(sql);
 
             //创建番组数据库
-            sql = "CREATE TABLE BAN_GU_MI_INFO " + "(ID INT PRIMARY KEY, " + "TITLE TEXT, " + "VIEWING_TIMES TEXT, " + "WATCHED_PEOPLE TEXT, "
-                    + "DANMAKU_COUNT TEXT, " + "DATE TEXT, " + "STATUS TEXT" + ")";
-            stmt.executeUpdate(sql);
+//            sql = "CREATE TABLE BAN_GU_MI_INFO " + "(ID INT PRIMARY KEY, " + "TITLE TEXT, " + "VIEWING_TIMES TEXT, " + "WATCHED_PEOPLE TEXT, "
+//                    + "DANMAKU_COUNT TEXT, " + "DATE TEXT, " + "STATUS TEXT" + ")";
+//            stmt.executeUpdate(sql);
 
             System.out.println("Table created successfully");
 
@@ -58,13 +100,14 @@ public class SQLiteManager {
 
     /**
      * 插入单条番组数据
+     *
      * @param id
      * @param title
      * @param viewing_time  观看次数
      * @param watched_times 观看人数
      * @param danmaku_count 弹幕数量
-     * @param date  开播日期
-     * @param status 当前状态
+     * @param date          开播日期
+     * @param status        当前状态
      */
     public void insertBangumi(String id, String title, String viewing_time, String watched_times,
                               String danmaku_count, String date, String status) {
@@ -85,7 +128,8 @@ public class SQLiteManager {
 
     /**
      * 查询用户是否在数据库中
-     * @param mid  用户id
+     *
+     * @param mid 用户id
      * @return true表示数据库已经存在
      */
     public boolean queryUser(int mid) {
@@ -111,6 +155,7 @@ public class SQLiteManager {
 
     /**
      * 将单个用户数据插入到数据库中
+     *
      * @param mid
      * @param nickname
      * @param fans
@@ -139,6 +184,7 @@ public class SQLiteManager {
             e.printStackTrace();
         }
     }
+
 
     public void insertVideo(int aid, int mid, int play, String title, int comment, int favorites, String created) {
         try {

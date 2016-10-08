@@ -2,7 +2,6 @@ package zdy.bili.fan.ayalysis.bean;
 
 import com.google.gson.JsonArray;
 
-import java.util.ArrayList;
 
 public class UserInfo {
     public String mid;

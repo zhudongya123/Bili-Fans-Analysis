@@ -43,7 +43,7 @@ public class JsonUtils {
             userInfo.level = level_info.get("current_level").getAsInt();
             userInfo.current_exp = level_info.get("current_exp").getAsInt();
 
-            JsonObject official_verify = info.get("official_status").getAsJsonObject();
+            JsonObject official_verify = info.get("official_verify").getAsJsonObject();
             userInfo.official_desc = official_verify.get("desc").getAsString();
             userInfo.official_status = official_verify.get("type").getAsInt();
 
