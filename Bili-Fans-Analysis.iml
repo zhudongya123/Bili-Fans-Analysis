@@ -95,7 +95,9 @@
           <root url="jar://$MODULE_DIR$/libs/okhttp-3.4.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/okhttp-3.4.1-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -109,5 +111,6 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jsoup-1.9.2" level="project" />
   </component>
 </module>

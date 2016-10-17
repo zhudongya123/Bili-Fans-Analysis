@@ -1,12 +1,17 @@
 package zdy.bili.fan.ayalysis.manager;
 
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.Headers;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import okhttp3.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.CertificateFactory;
 import java.util.Random;
 
 public class BiliApiManager {
@@ -17,6 +22,8 @@ public class BiliApiManager {
     private static final String GET_ATTENTION = "ajax/friend/GetAttentionList";
     private static final String GET_VIDEO_LIST = "ajax/member/getSubmitVideos";
     private static final String GET_BAN_GU_MI = "bangumi.bilibili.com/anime/";
+
+    private static final String LIVE_HOST = "live.bilibili.com";
 
     private static final BiliApiManager INSTANCE = new BiliApiManager();
 
@@ -33,7 +40,7 @@ public class BiliApiManager {
 
     private void init() {
         // TODO Auto-generated method stub
-        okHttpClient = new OkHttpClient();
+        okHttpClient = new OkHttpClient.Builder().build();
         random = new Random();
     }
 
@@ -53,6 +60,7 @@ public class BiliApiManager {
         okHttpClient.newCall(request).enqueue(callback);
 
     }
+
 
     private Headers getHeaders() {
         return getHeaders(null);
@@ -82,6 +90,47 @@ public class BiliApiManager {
     // return null;
     // }
 
+
+    public void getLiveinfo(String liveId, Callback callback) {
+        HttpUrl url = new HttpUrl.Builder().scheme(SCHEME).host(LIVE_HOST).addPathSegment(liveId).build();
+        Request prepareRequest = new Request.Builder().url(url).build();
+
+        okHttpClient.newCall(prepareRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                System.out.println("");
+                System.out.println("liveid = " + liveId);
+                if (response.code() == 404) {
+                    System.out.println("liveid = " + "不存在");
+                    return;
+                }
+
+                String htmlString = response.body().string();
+                Document document = Jsoup.parse(htmlString);
+                String result = document.head().getAllElements().get(18).childNodes().get(0).attributes().get("data");
+                StringBuilder builder = new StringBuilder(result);
+                builder.indexOf("");
+                int room_id = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
+                builder.delete(0, builder.indexOf(";") + 2);
+                int danmu_rnd = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
+                builder.delete(0, builder.indexOf(";") + 2);
+                builder.delete(0, builder.indexOf(";") + 2);
+                int room_url = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
+                System.out.println("room_id = " + room_id);
+                System.out.println("danmu_rnd = " + danmu_rnd);
+                System.out.println("room_url = " + room_url);
+                System.out.println("");
+
+                response.close();
+            }
+        });
+    }
+
     public void getAttention(String mid, Callback callback) {
         HttpUrl url = new HttpUrl.Builder().scheme(SCHEME).host(HOST).addPathSegments(GET_ATTENTION)
                 .addQueryParameter("mid", mid).build();
@@ -98,4 +147,41 @@ public class BiliApiManager {
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+    public SSLSocketFactory setCertificates(InputStream... certificates) {
+        try {
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null);
+            int index = 0;
+            for (InputStream certificate : certificates) {
+                String certificateAlias = Integer.toString(index++);
+                keyStore.setCertificateEntry(certificateAlias, certificateFactory.generateCertificate(certificate));
+                try {
+                    if (certificate != null)
+                        certificate.close();
+                } catch (IOException e) {
+                }
+            }
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+
+            TrustManagerFactory trustManagerFactory =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+
+            trustManagerFactory.init(keyStore);
+            sslContext.init
+                    (
+                            null,
+                            trustManagerFactory.getTrustManagers(),
+                            new SecureRandom()
+                    );
+            return sslContext.getSocketFactory();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

@@ -32,6 +32,7 @@ public class RandomUserTest {
                     String result = response.body().string();
                     UserInfo userInfo = JsonUtils.getUserInfo(result);
                     SQLiteManager.getInstance().insertUser(userInfo);
+                    response.close();
                 }
             });
         }

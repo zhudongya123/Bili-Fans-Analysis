@@ -54,6 +54,7 @@ public class BangumiTest {
                 String date = p.get(0).child(2).child(0).child(0).html();
                 String status = p.get(0).child(2).child(0).child(1).html();
                 SQLiteManager.getInstance().insertBangumi(id, title, viewing_time, watched_people, danmaku_count, date, status);
+                response.close();
             }
 
             @Override
