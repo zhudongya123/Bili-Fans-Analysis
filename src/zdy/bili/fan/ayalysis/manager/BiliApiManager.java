@@ -1,8 +1,13 @@
 package zdy.bili.fan.ayalysis.manager;
 
+import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import rx.Observable;
+import rx.functions.Action1;
+import zdy.bili.fan.ayalysis.JsonUtils;
+import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -24,6 +29,7 @@ public class BiliApiManager {
     private static final String GET_BAN_GU_MI = "bangumi.bilibili.com/anime/";
 
     private static final String LIVE_HOST = "live.bilibili.com";
+    private static final String LIVE_USER_INFO = "live/getInfo";
 
     private static final BiliApiManager INSTANCE = new BiliApiManager();
 
@@ -90,10 +96,34 @@ public class BiliApiManager {
     // return null;
     // }
 
+    interface LiveInfoCallBack {
+        void onResponse(LiveUserInfo liveUserInfo);
+    }
 
-    public void getLiveinfo(String liveId, Callback callback) {
-        HttpUrl url = new HttpUrl.Builder().scheme(SCHEME).host(LIVE_HOST).addPathSegment(liveId).build();
-        Request prepareRequest = new Request.Builder().url(url).build();
+    public void getLiveinfo(String liveId, LiveInfoCallBack callback) {
+        final LiveUserInfo[] liveUserInfo = {new LiveUserInfo()};
+
+        HttpUrl prepareUrl = new HttpUrl.Builder().scheme(SCHEME).host(LIVE_HOST).addPathSegment(liveId).build();
+        Request prepareRequest = new Request.Builder().url(prepareUrl).build();
+
+        Action1<Integer> liveInfoAction = integer -> {
+            HttpUrl url = new HttpUrl.Builder().scheme(SCHEME).host(LIVE_HOST)
+                    .addPathSegments(LIVE_USER_INFO).addQueryParameter("roomid", String.valueOf(integer)).build();
+            Request request = new Request.Builder().url(url).build();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    liveUserInfo[0] = JsonUtils.getLiveUserInfo(liveUserInfo[0], result);
+                    callback.onResponse(liveUserInfo[0]);
+                }
+            });
+        };
 
         okHttpClient.newCall(prepareRequest).enqueue(new Callback() {
             @Override
@@ -109,26 +139,22 @@ public class BiliApiManager {
                     System.out.println("liveid = " + "不存在");
                     return;
                 }
-
                 String htmlString = response.body().string();
                 Document document = Jsoup.parse(htmlString);
                 String result = document.head().getAllElements().get(18).childNodes().get(0).attributes().get("data");
                 StringBuilder builder = new StringBuilder(result);
                 builder.indexOf("");
-                int room_id = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
+                liveUserInfo[0].roomId = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
                 builder.delete(0, builder.indexOf(";") + 2);
-                int danmu_rnd = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
+                liveUserInfo[0].danmakuRnd = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
                 builder.delete(0, builder.indexOf(";") + 2);
                 builder.delete(0, builder.indexOf(";") + 2);
-                int room_url = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
-                System.out.println("room_id = " + room_id);
-                System.out.println("danmu_rnd = " + danmu_rnd);
-                System.out.println("room_url = " + room_url);
-                System.out.println("");
-
+                liveUserInfo[0].url = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
                 response.close();
+                Observable.just(liveUserInfo[0].roomId).subscribe(liveInfoAction);
             }
         });
+
     }
 
     public void getAttention(String mid, Callback callback) {

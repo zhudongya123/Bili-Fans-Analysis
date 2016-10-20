@@ -2,6 +2,7 @@ package zdy.bili.fan.ayalysis;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
 import zdy.bili.fan.ayalysis.bean.UserInfo;
 
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ public class JsonUtils {
 
     private static JsonParser jsonParser = new JsonParser();
     private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     public static UserInfo getUserInfo(String raw) {
         UserInfo userInfo = new UserInfo();
         JsonObject root = jsonParser.parse(raw).getAsJsonObject();
@@ -51,5 +53,17 @@ public class JsonUtils {
 
             return userInfo;
         }
+    }
+
+    public static LiveUserInfo getLiveUserInfo(LiveUserInfo liveUserInfo, String raw) {
+        JsonObject jsonObject = jsonParser.parse(raw).getAsJsonObject();
+        liveUserInfo.areaId = jsonObject.get("AREAID").getAsInt();
+        liveUserInfo.masterId=jsonObject.get("MASTERID").getAsInt();
+        liveUserInfo.nickname=jsonObject.get("ANCHOR_NICK_NAME").getAsString();
+        liveUserInfo.liveStatus=jsonObject.get("_status").getAsString();
+        liveUserInfo.rcost=jsonObject.get("RCOST").getAsInt();
+        liveUserInfo.fans_count=jsonObject.get("FANS_COUNT").getAsInt();
+
+        return liveUserInfo;
     }
 }
