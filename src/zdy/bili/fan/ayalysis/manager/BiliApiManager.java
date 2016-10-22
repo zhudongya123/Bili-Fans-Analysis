@@ -96,7 +96,7 @@ public class BiliApiManager {
     // return null;
     // }
 
-    interface LiveInfoCallBack {
+    public interface LiveInfoCallBack {
         void onResponse(LiveUserInfo liveUserInfo);
     }
 
@@ -119,6 +119,8 @@ public class BiliApiManager {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String result = response.body().string();
+                    response.body().close();
+                    System.out.println(result);
                     liveUserInfo[0] = JsonUtils.getLiveUserInfo(liveUserInfo[0], result);
                     callback.onResponse(liveUserInfo[0]);
                 }
@@ -140,6 +142,7 @@ public class BiliApiManager {
                     return;
                 }
                 String htmlString = response.body().string();
+                response.body().close();
                 Document document = Jsoup.parse(htmlString);
                 String result = document.head().getAllElements().get(18).childNodes().get(0).attributes().get("data");
                 StringBuilder builder = new StringBuilder(result);
@@ -150,7 +153,7 @@ public class BiliApiManager {
                 builder.delete(0, builder.indexOf(";") + 2);
                 builder.delete(0, builder.indexOf(";") + 2);
                 liveUserInfo[0].url = Integer.valueOf(builder.substring(builder.indexOf("=") + 2, builder.indexOf(";")));
-                response.close();
+
                 Observable.just(liveUserInfo[0].roomId).subscribe(liveInfoAction);
             }
         });

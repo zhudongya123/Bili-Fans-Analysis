@@ -56,7 +56,8 @@ public class JsonUtils {
     }
 
     public static LiveUserInfo getLiveUserInfo(LiveUserInfo liveUserInfo, String raw) {
-        JsonObject jsonObject = jsonParser.parse(raw).getAsJsonObject();
+        JsonObject root = jsonParser.parse(raw).getAsJsonObject();
+        JsonObject jsonObject=root.get("data").getAsJsonObject();
         liveUserInfo.areaId = jsonObject.get("AREAID").getAsInt();
         liveUserInfo.masterId=jsonObject.get("MASTERID").getAsInt();
         liveUserInfo.nickname=jsonObject.get("ANCHOR_NICK_NAME").getAsString();

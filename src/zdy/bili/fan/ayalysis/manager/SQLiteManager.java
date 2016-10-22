@@ -1,5 +1,6 @@
 package zdy.bili.fan.ayalysis.manager;
 
+import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
 import zdy.bili.fan.ayalysis.bean.UserInfo;
 
 import java.sql.Connection;
@@ -71,27 +72,31 @@ public class SQLiteManager {
         try {
             Statement stmt = c.createStatement();
             String sql;
-            //创建用户信息数据库
-            sql = "CREATE TABLE BILI_USER_INFO_TABLE "
-                    + "(MID TEXT PRIMARY KEY, " + "NAME TEXT, " + "APPROVE TEXT, " + "SEX TEXT, " + "RANK TEXT, "
-                    + "FACE TEXT, " + "COINS TEXT, " + "DISPLAYRANK TEXT, " + "REGTIME TEXT, " + "SPACESTA INT, "
-                    + "BIRTHDAY TEXT, " + "PLACE TEXT, " + "DESCRIPTION TEXT, " + "ATTENTIONS TEXT, " + "FANS INT, "
-                    + "FRIEND INT, " + "ATTENTION INT, " + "SIGN TEXT, " + "CURRENT_EXP INT, " + "LEVEL INT, "
-                    + "OFFICIAL_STATUS INT, " + "OFFICIAL_DESC TEXT, " + "PLAYNUM INT" + ")";
-            stmt.executeUpdate(sql);
+            //创建用户信息表
+//            sql = "CREATE TABLE BILI_USER_INFO_TABLE "
+//                    + "(MID TEXT PRIMARY KEY, " + "NAME TEXT, " + "APPROVE TEXT, " + "SEX TEXT, " + "RANK TEXT, "
+//                    + "FACE TEXT, " + "COINS TEXT, " + "DISPLAYRANK TEXT, " + "REGTIME TEXT, " + "SPACESTA INT, "
+//                    + "BIRTHDAY TEXT, " + "PLACE TEXT, " + "DESCRIPTION TEXT, " + "ATTENTIONS TEXT, " + "FANS INT, "
+//                    + "FRIEND INT, " + "ATTENTION INT, " + "SIGN TEXT, " + "CURRENT_EXP INT, " + "LEVEL INT, "
+//                    + "OFFICIAL_STATUS INT, " + "OFFICIAL_DESC TEXT, " + "PLAYNUM INT" + ")";
+//            stmt.executeUpdate(sql);
 
-            //创建视频信息数据库
+            //创建视频信息表
 //            sql = "CREATE TABLE BILI_VIDEO " + "(AID INT PRIMARY KEY, " + "MID INT, " + "PLAY_COUNT INT, "
 //                    + "TITLE TEXT, " + "COMMENT INT, " + "FAVORITES INT, " + "CREATED TEXT" + ")";
 //            stmt.executeUpdate(sql);
 
-            //创建番组数据库
+            //创建番组表
 //            sql = "CREATE TABLE BAN_GU_MI_INFO " + "(ID INT PRIMARY KEY, " + "TITLE TEXT, " + "VIEWING_TIMES TEXT, " + "WATCHED_PEOPLE TEXT, "
 //                    + "DANMAKU_COUNT TEXT, " + "DATE TEXT, " + "STATUS TEXT" + ")";
 //            stmt.executeUpdate(sql);
 
-            System.out.println("Table created successfully");
+            //直播用户信息表
+            sql = "CREATE TABLE LIVE_USER_INFO " + "(MASTER_ID INT PRIMARY KEY, " + "ROOM_ID INT, " + "DANMAKU_RND INT, " + "URL INT, "
+                    + "NICKNAME TEXT, " + "R_COST INT, " + "AREA_ID INT, " + "FANS_COUNT INT, " + "LIVE_STATUS TEXT" + ")";
+            stmt.executeUpdate(sql);
 
+            System.out.println("成功创建LIVE_USER_INFO表");
             stmt.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,10 +132,62 @@ public class SQLiteManager {
     }
 
     /**
-     * 查询用户是否在数据库中
+     * 查询用户是否在表中
+     *
+     * @param master_id 房间号id
+     * @return true表示表已经存在
+     */
+    public boolean queryLiveUser(int master_id) {
+        String sql;
+        try {
+            Statement stmt = c.createStatement();
+            sql = "SELECT * FROM LIVE_USER_INFO WHERE MASTER_ID=" + master_id + ";";
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("skip item");
+            if (rs.next()) {
+                stmt.close();
+                return true;
+            } else {
+                stmt.close();
+                return false;
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 将单个直播数据插入到表中
+     */
+    public void insertLiveUser(LiveUserInfo liveUserInfo) {
+        String sql;
+        try {
+            Statement stmt = c.createStatement();
+            sql = "SELECT * FROM LIVE_USER_INFO WHERE MASTER_ID=" + liveUserInfo.masterId + ";";
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                return;
+            } else {
+                sql = "INSERT INTO LIVE_USER_INFO (MASTER_ID,ROOM_ID,DANMAKU_RND,URL,NICKNAME,R_COST,AREA_ID,FANS_COUNT,LIVE_STATUS) "
+                        + "VALUES (" + liveUserInfo.masterId + "," + liveUserInfo.roomId + "," + liveUserInfo.danmakuRnd + "," + liveUserInfo.url + ",'" + liveUserInfo.nickname + "',"
+                        + liveUserInfo.rcost + "," + liveUserInfo.areaId + "," + liveUserInfo.fans_count + ",'" + liveUserInfo.liveStatus + "' );";
+                stmt.executeUpdate(sql);
+                System.out.println("ADD LIVE_USER_INFO item");
+            }
+            stmt.close();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 查询用户是否在表中
      *
      * @param mid 用户id
-     * @return true表示数据库已经存在
+     * @return true表示表已经存在
      */
     public boolean queryUser(int mid) {
         String sql;
@@ -154,7 +211,7 @@ public class SQLiteManager {
     }
 
     /**
-     * 将单个用户数据插入到数据库中
+     * 将单个用户数据插入到表中
      *
      * @param mid
      * @param nickname
