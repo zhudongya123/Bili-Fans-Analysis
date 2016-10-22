@@ -1,9 +1,9 @@
-package zdy.bili.fan.ayalysis;
+package zdy.bili.user.ayalysis;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
-import zdy.bili.fan.ayalysis.bean.UserInfo;
+import zdy.bili.user.ayalysis.bean.LiveUserInfo;
+import zdy.bili.user.ayalysis.bean.UserInfo;
 
 import java.text.SimpleDateFormat;
 

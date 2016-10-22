@@ -1,4 +1,4 @@
-package zdy.bili.fan.ayalysis.test;
+package zdy.bili.user.ayalysis.test;
 
 import java.io.IOException;
 
@@ -9,8 +9,8 @@ import com.google.gson.JsonParser;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import zdy.bili.fan.ayalysis.manager.BiliApiManager;
-import zdy.bili.fan.ayalysis.manager.SQLiteManager;
+import zdy.bili.user.ayalysis.manager.BiliApiManager;
+import zdy.bili.user.ayalysis.manager.SQLiteManager;
 
 public class Test {
 

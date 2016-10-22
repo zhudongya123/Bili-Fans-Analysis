@@ -1,7 +1,7 @@
-package zdy.bili.fan.ayalysis.manager;
+package zdy.bili.user.ayalysis.manager;
 
-import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
-import zdy.bili.fan.ayalysis.bean.UserInfo;
+import zdy.bili.user.ayalysis.bean.LiveUserInfo;
+import zdy.bili.user.ayalysis.bean.UserInfo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

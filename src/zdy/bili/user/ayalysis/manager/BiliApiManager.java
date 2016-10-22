@@ -1,13 +1,12 @@
-package zdy.bili.fan.ayalysis.manager;
+package zdy.bili.user.ayalysis.manager;
 
-import com.google.gson.JsonObject;
 import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import rx.Observable;
 import rx.functions.Action1;
-import zdy.bili.fan.ayalysis.JsonUtils;
-import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
+import zdy.bili.user.ayalysis.JsonUtils;
+import zdy.bili.user.ayalysis.bean.LiveUserInfo;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;

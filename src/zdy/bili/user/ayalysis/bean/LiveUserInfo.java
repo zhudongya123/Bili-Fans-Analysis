@@ -1,4 +1,4 @@
-package zdy.bili.fan.ayalysis.bean;
+package zdy.bili.user.ayalysis.bean;
 
 /**
  * Created by Zdy on 2016/10/18.

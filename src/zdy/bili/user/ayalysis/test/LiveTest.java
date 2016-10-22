@@ -1,8 +1,7 @@
-package zdy.bili.fan.ayalysis.test;
+package zdy.bili.user.ayalysis.test;
 
-import zdy.bili.fan.ayalysis.bean.LiveUserInfo;
-import zdy.bili.fan.ayalysis.manager.BiliApiManager;
-import zdy.bili.fan.ayalysis.manager.SQLiteManager;
+import zdy.bili.user.ayalysis.manager.BiliApiManager;
+import zdy.bili.user.ayalysis.manager.SQLiteManager;
 
 import java.util.Random;
 

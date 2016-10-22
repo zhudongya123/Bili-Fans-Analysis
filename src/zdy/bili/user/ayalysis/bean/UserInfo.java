@@ -1,4 +1,4 @@
-package zdy.bili.fan.ayalysis.bean;
+package zdy.bili.user.ayalysis.bean;
 
 import com.google.gson.JsonArray;
 
@@ -13,18 +13,18 @@ public class UserInfo {
     public float coins;
     public String DisplayRank;
     public String regtime;
-    public int spacesta;//ÓÃ»§×´Ì¬
+    public int spacesta;//ï¿½Ã»ï¿½×´Ì¬
     public String birthday;
-    public String place;// ËùÔÚµØ
-    public String description;//ÃèÊö
+    public String place;// ï¿½ï¿½ï¿½Úµï¿½
+    public String description;//ï¿½ï¿½ï¿½ï¿½
     public JsonArray attentions;
-    public int fans;// ·ÛË¿ÊıÁ¿
-    public int friend;// ºÃÓÑÊıÁ¿
-    public int attention;// ¹Ø×¢ÊıÁ¿
-    public String sign;// Ç©Ãû
-    public int current_exp;//µ±Ç°¾­Ñé
+    public int fans;// ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ï¿½
+    public int friend;// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int attention;// ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½
+    public String sign;// Ç©ï¿½ï¿½
+    public int current_exp;//ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½
     public int level;
-    public int official_status;//ÈÏÖ¤
+    public int official_status;//ï¿½ï¿½Ö¤
     public String official_desc;
     public int playNum;
 
