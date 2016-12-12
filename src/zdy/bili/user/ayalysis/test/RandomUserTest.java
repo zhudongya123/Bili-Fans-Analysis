@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
+ * 随机用户测试样例
  * Created by Zdy on 2016/10/5.
  */
 public class RandomUserTest {

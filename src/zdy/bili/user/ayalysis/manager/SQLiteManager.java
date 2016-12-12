@@ -11,10 +11,16 @@ import java.sql.Statement;
 
 public class SQLiteManager {
 
+    private static final String BILI_USER_INFO_TABLE = "BILI_USER_INFO_TABLE";
+    private static final String BILI_VIDEO = "BILI_VIDEO";
+    private static final String BAN_GU_MI_INFO = "BAN_GU_MI_INFO";
+    private static final String LIVE_USER_INFO = "LIVE_USER_INFO";
+
+
     private static final SQLiteManager INSTANCE = new SQLiteManager();
     private static int i = 0;
 
-    Connection c = null;
+    private Connection c = null;
 
     private SQLiteManager() {
         try {
@@ -37,12 +43,12 @@ public class SQLiteManager {
         String sql;
         try {
             Statement stmt = c.createStatement();
-            sql = "SELECT * FROM BILI_USER_INFO_TABLE WHERE MID=" + userInfo.mid + ";";
+            sql = "SELECT * FROM " + BILI_USER_INFO_TABLE + " WHERE MID=" + userInfo.mid + ";";
             ResultSet rs = stmt.executeQuery(sql);
             if (rs.next()) {
                 return;
             } else {
-                sql = "INSERT INTO BILI_USER_INFO_TABLE " +
+                sql = "INSERT INTO " + BILI_USER_INFO_TABLE + " " +
                         "(MID,NAME,APPROVE,SEX,RANK," +
                         "FACE,COINS,DISPLAYRANK,REGTIME,SPACESTA," +
                         "BIRTHDAY,PLACE,DESCRIPTION,ATTENTIONS,FANS," +
@@ -73,7 +79,7 @@ public class SQLiteManager {
             Statement stmt = c.createStatement();
             String sql;
             //创建用户信息表
-//            sql = "CREATE TABLE BILI_USER_INFO_TABLE "
+//            sql = "CREATE TABLE "+BILI_USER_INFO_TABLE+"
 //                    + "(MID TEXT PRIMARY KEY, " + "NAME TEXT, " + "APPROVE TEXT, " + "SEX TEXT, " + "RANK TEXT, "
 //                    + "FACE TEXT, " + "COINS TEXT, " + "DISPLAYRANK TEXT, " + "REGTIME TEXT, " + "SPACESTA INT, "
 //                    + "BIRTHDAY TEXT, " + "PLACE TEXT, " + "DESCRIPTION TEXT, " + "ATTENTIONS TEXT, " + "FANS INT, "
@@ -82,17 +88,17 @@ public class SQLiteManager {
 //            stmt.executeUpdate(sql);
 
             //创建视频信息表
-//            sql = "CREATE TABLE BILI_VIDEO " + "(AID INT PRIMARY KEY, " + "MID INT, " + "PLAY_COUNT INT, "
+//            sql = "CREATE TABLE "+BILI_VIDEO+" " + "(AID INT PRIMARY KEY, " + "MID INT, " + "PLAY_COUNT INT, "
 //                    + "TITLE TEXT, " + "COMMENT INT, " + "FAVORITES INT, " + "CREATED TEXT" + ")";
 //            stmt.executeUpdate(sql);
 
             //创建番组表
-//            sql = "CREATE TABLE BAN_GU_MI_INFO " + "(ID INT PRIMARY KEY, " + "TITLE TEXT, " + "VIEWING_TIMES TEXT, " + "WATCHED_PEOPLE TEXT, "
+//            sql = "CREATE TABLE "+BAN_GU_MI_INFO+" + "(ID INT PRIMARY KEY, " + "TITLE TEXT, " + "VIEWING_TIMES TEXT, " + "WATCHED_PEOPLE TEXT, "
 //                    + "DANMAKU_COUNT TEXT, " + "DATE TEXT, " + "STATUS TEXT" + ")";
 //            stmt.executeUpdate(sql);
 
             //直播用户信息表
-            sql = "CREATE TABLE LIVE_USER_INFO " + "(MASTER_ID INT PRIMARY KEY, " + "ROOM_ID INT, " + "DANMAKU_RND INT, " + "URL INT, "
+            sql = "CREATE TABLE " + LIVE_USER_INFO + "(MASTER_ID INT PRIMARY KEY, " + "ROOM_ID INT, " + "DANMAKU_RND INT, " + "URL INT, "
                     + "NICKNAME TEXT, " + "R_COST INT, " + "AREA_ID INT, " + "FANS_COUNT INT, " + "LIVE_STATUS TEXT" + ")";
             stmt.executeUpdate(sql);
 
@@ -106,8 +112,8 @@ public class SQLiteManager {
     /**
      * 插入单条番组数据
      *
-     * @param id
-     * @param title
+     * @param id   番组id
+     * @param title 番组名称
      * @param viewing_time  观看次数
      * @param watched_times 观看人数
      * @param danmaku_count 弹幕数量
@@ -119,7 +125,7 @@ public class SQLiteManager {
         String sql;
         try {
             Statement stmt = c.createStatement();
-            sql = "INSERT INTO BAN_GU_MI_INFO (ID,TITLE,VIEWING_TIMES,WATCHED_PEOPLE,DANMAKU_COUNT,DATE,STATUS) " + "VALUES (" + id
+            sql = "INSERT INTO " + BAN_GU_MI_INFO + " (ID,TITLE,VIEWING_TIMES,WATCHED_PEOPLE,DANMAKU_COUNT,DATE,STATUS) " + "VALUES (" + id
                     + ", '" + title + "', '" + viewing_time + "', '" + watched_times + "', '" + danmaku_count + "', '" + date + "','" + status
                     + "' );";
             stmt.executeUpdate(sql);
@@ -141,7 +147,7 @@ public class SQLiteManager {
         String sql;
         try {
             Statement stmt = c.createStatement();
-            sql = "SELECT * FROM LIVE_USER_INFO WHERE MASTER_ID=" + master_id + ";";
+            sql = "SELECT * FROM " + LIVE_USER_INFO + " WHERE MASTER_ID=" + master_id + ";";
             ResultSet rs = stmt.executeQuery(sql);
             System.out.println("skip item");
             if (rs.next()) {
@@ -165,12 +171,12 @@ public class SQLiteManager {
         String sql;
         try {
             Statement stmt = c.createStatement();
-            sql = "SELECT * FROM LIVE_USER_INFO WHERE MASTER_ID=" + liveUserInfo.masterId + ";";
+            sql = "SELECT * FROM " + LIVE_USER_INFO + " WHERE MASTER_ID=" + liveUserInfo.masterId + ";";
             ResultSet rs = stmt.executeQuery(sql);
             if (rs.next()) {
                 return;
             } else {
-                sql = "INSERT INTO LIVE_USER_INFO (MASTER_ID,ROOM_ID,DANMAKU_RND,URL,NICKNAME,R_COST,AREA_ID,FANS_COUNT,LIVE_STATUS) "
+                sql = "INSERT INTO " + LIVE_USER_INFO + " (MASTER_ID,ROOM_ID,DANMAKU_RND,URL,NICKNAME,R_COST,AREA_ID,FANS_COUNT,LIVE_STATUS) "
                         + "VALUES (" + liveUserInfo.masterId + "," + liveUserInfo.roomId + "," + liveUserInfo.danmakuRnd + "," + liveUserInfo.url + ",'" + liveUserInfo.nickname + "',"
                         + liveUserInfo.rcost + "," + liveUserInfo.areaId + "," + liveUserInfo.fans_count + ",'" + liveUserInfo.liveStatus + "' );";
                 stmt.executeUpdate(sql);
@@ -213,12 +219,12 @@ public class SQLiteManager {
     /**
      * 将单个用户数据插入到表中
      *
-     * @param mid
-     * @param nickname
-     * @param fans
-     * @param attention
-     * @param registerTime
-     * @param total_num
+     * @param mid   用户id
+     * @param nickname  昵称
+     * @param fans 粉丝数量
+     * @param attention   关注数
+     * @param registerTime   注册时间
+     * @param total_num  投稿播放总数
      */
     public void insertUser(int mid, String nickname, int fans, int attention, String registerTime, int total_num) {
         String sql;
@@ -246,11 +252,11 @@ public class SQLiteManager {
     public void insertVideo(int aid, int mid, int play, String title, int comment, int favorites, String created) {
         try {
             Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM BILI_VIDEO WHERE AID=" + aid + ";");
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + BILI_VIDEO + " WHERE AID=" + aid + ";");
             if (rs.next()) {
                 return;
             } else {
-                String sql = "INSERT INTO BILI_VIDEO (AID,MID,PLAY_COUNT,TITLE,COMMENT,FAVORITES,CREATED) " + "VALUES ("
+                String sql = "INSERT INTO " + BILI_VIDEO + " (AID,MID,PLAY_COUNT,TITLE,COMMENT,FAVORITES,CREATED) " + "VALUES ("
                         + aid + "," + mid + "," + play + ", '" + title + "', " + comment + ", " + favorites + ", '"
                         + created + "' );";
                 stmt.executeUpdate(sql);

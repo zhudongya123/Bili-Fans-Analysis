@@ -12,11 +12,15 @@ import zdy.bili.user.ayalysis.manager.SQLiteManager;
 
 import java.io.IOException;
 
+/**
+ * 番组数据测试样例
+ */
 public class BangumiTest {
     public static void main(String[] args) {
         SQLiteManager.getInstance().initdb();
         for (int i = 1; i < 5527; i++) {
             bangumi(String.valueOf(i));
+
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {

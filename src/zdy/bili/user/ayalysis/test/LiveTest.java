@@ -6,6 +6,7 @@ import zdy.bili.user.ayalysis.manager.SQLiteManager;
 import java.util.Random;
 
 /**
+ * 直播博主数据随机测试样例
  * Created by Zdy on 2016/10/17.
  */
 public class LiveTest {
@@ -16,7 +17,6 @@ public class LiveTest {
     }
 
     public static void main(String[] args) {
-      //  SQLiteManager.getInstance().initdb();
         for (int i = 0; i < 100; i++) {
             BiliApiManager.getInstance().getLiveinfo(6000 + random.nextInt(20000) + "", liveUserInfo -> {
                 SQLiteManager.getInstance().insertLiveUser(liveUserInfo);
